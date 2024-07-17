@@ -168,41 +168,44 @@
             function checkCollisions(newX, newY) {
                 const cellX = Math.floor(newX);
                 const cellY = Math.floor(newY);
+            const cellX = Math.floor(newX);
+            const cellY = Math.floor(newY);
 
-                if (newX < 0 || newX >= cols || newY < 0 || newY >= rows) {
-                    return { newX: player.x, newY: player.y };
-                }
-
-                if (velocity.x > 0) {
-                    if (generatedMaze[cellX][cellY].walls.right && (newX + ballRadius / cellSize) > (cellX + 1)) {
-                        newX = cellX + 1 - ballRadius / cellSize;
-                        velocity.x = 0;
-                    }
-                }
-
-                if (velocity.x < 0) {
-                    if (generatedMaze[cellX][cellY].walls.left && (newX - ballRadius / cellSize) < cellX) {
-                        newX = cellX + ballRadius / cellSize;
-                        velocity.x = 0;
-                    }
-                }
-
-                if (velocity.y > 0) {
-                    if (generatedMaze[cellX][cellY].walls.bottom && (newY + ballRadius / cellSize) > (cellY + 1)) {
-                        newY = cellY + 1 - ballRadius / cellSize;
-                        velocity.y = 0;
-                    }
-                }
-
-                if (velocity.y < 0) {
-                    if (generatedMaze[cellX][cellY].walls.top && (newY - ballRadius / cellSize) < cellY) {
-                        newY = cellY + ballRadius / cellSize;
-                        velocity.y = 0;
-                    }
-                }
-
-                return { newX, newY };
+            if (newX < 0 || newX >= cols || newY < 0 || newY >= rows) {
+                return { newX: player.x, newY: player.y };
             }
+
+            // Horizontal wall collisions
+            if (velocity.x > 0) {
+                if (generatedMaze[cellX][cellY].walls.right && (newX + ballRadius / cellSize) > (cellX + 1)) {
+                    newX = cellX + 1 - ballRadius / cellSize;
+                    velocity.x = -velocity.x; // Reverse horizontal velocity
+                }
+            }
+            else if (velocity.x < 0) {
+                if (generatedMaze[cellX][cellY].walls.left && (newX - ballRadius / cellSize) < cellX) {
+                    newX = cellX + ballRadius / cellSize;
+                    velocity.x = -velocity.x; // Reverse horizontal velocity
+                }
+            }
+
+            // Vertical wall collisions
+            if (velocity.y > 0) {
+                if (generatedMaze[cellX][cellY].walls.bottom && (newY + ballRadius / cellSize) > (cellY + 1)) {
+                    newY = cellY + 1 - ballRadius / cellSize;
+                    velocity.y = -velocity.y; // Reverse vertical velocity
+                }
+            }
+            else if (velocity.y < 0) {
+                if (generatedMaze[cellX][cellY].walls.top && (newY - ballRadius / cellSize) < cellY) {
+                    newY = cellY + ballRadius / cellSize;
+                    velocity.y = -velocity.y; // Reverse vertical velocity
+                }
+            }
+
+            return { newX, newY };
+        }
+
 
             // Function to update ball's position based on physics
             function updateBallPosition() {
