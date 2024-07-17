@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Host</title>
+    <link rel="stylesheet" href="css/player.css" />
+    <link rel="stylesheet" href="css/winner.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    </script>
+  </head>
+  <body>
+    <canvas
+      class="canvas"
+      id="maze"
+      style="border: 1px solid black"
+      width="780"
+      height="600"
+    ></canvas>
+    <canvas class="canvas" id="ball" width="780" height="600"></canvas>
+
+    <div id="winner" class="points-table" style="display: none"></div>
+
+    <div style="display: none">
+      <h1>Multiplayer Host</h1>
+      <div id="hostSection">
+        <button id="listGamesButton">List Games</button>
+        <div id="gamesList"></div>
+      </div>
+    </div>
+    <button id="new" style="display: none">New Game</button>
+  </body>
+</html>

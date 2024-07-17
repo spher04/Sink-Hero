@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sink Hero</title>
+  <link rel="stylesheet" href="css/main.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        socket.on('gameStart', (data) => {
+                console.log(`Game ${data.gameId} started. You are player ${data.playerId} (Name: ${data.name})`);
+                document.getElementById('gameInfo').innerHTML = `
+                    <h2>Game Started!</h2>
+                    <p>Game ID: ${data.gameId}</p>
+                    <p>You are Player ${data.playerId} (Name: ${data.name})</p>
+                `;
+
+                document.getElementById('maze').style.display = 'block';
+                document.getElementById('ball').style.display = 'block';
+
+                player = data;
+                requestAnimationFrame(animate);
+            });
+
+            socket.on('sendMaze', (maze) => {
+                const canvas = document.getElementById('maze');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for(let i = 0; i < maze.length; i++) {
+                    for(let j = 0; j < maze[i].length; j++) {
+                        maze[i][j].show = function() {
+                            const cellSize = this.cellSize;
+
+                            const x = this.x * cellSize;
+                            const y = this.y * cellSize;
+
+                            ctx.beginPath();
+                            if (this.walls.top) {
+                                ctx.moveTo(x, y);
+                                ctx.lineTo(x + cellSize, y);
+                            }
+                            if (this.walls.right) {
+                                ctx.moveTo(x + cellSize, y);
+                                ctx.lineTo(x + cellSize, y + cellSize);
+                            }
+                            if (this.walls.bottom) {
+                                ctx.moveTo(x + cellSize, y + cellSize);
+                                ctx.lineTo(x, y + cellSize);
+                            }
+                            if (this.walls.left) {
+                                ctx.moveTo(x, y + cellSize);
+                                ctx.lineTo(x, y);
+                            }
+                            ctx.strokeStyle = 'green';
+                            ctx.lineWidth = 5;
+                            ctx.lineCap = "round";
+                            ctx.stroke();
+                        }
+                        maze[i][j].show();
+                    }
+                }
+                generatedMaze = maze;
+            });
+      // Add your game logic here
+    });
+  </script>
+</head>
+<body>
+  <h1 class="gametitle">Sink Hero</h1>
+  <canvas id="maze" style="display: block; border: 1px solid black;" width="780" height="600"></canvas>
+  <!-- <canvas id="ball" style="display: block; border: 1px solid black;" width="780" height="600"></canvas> -->
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const gameId = sessionStorage.getItem('gameId');
+      const username = sessionStorage.getItem('username');
+      console.log(`Game ID: ${gameId}, Username: ${username}`);
+      // Add your game logic here
+    });
+  </script>
+</body>
+</html>
