@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0; /* Light gray background color */
-    /* background-image: url(/client/images/b3.png); Background image path */
+    background-image: url(/client/images/b3.png); 
     background-size: cover; /* Cover the entire background */
     background-position: center; /* Center the background image */
     margin: 0;

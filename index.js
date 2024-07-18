@@ -13,6 +13,10 @@ const port = 3000;
 const games = {}; // Use an object to store games by their ID
 const hosts = {};
 
+
+// Serve static files from 'client' directory
+app.use('/client', express.static(path.join(__dirname, 'client')));
+
 // Serve static files from the 'client/public' directory
 app.use(express.static(path.join(__dirname, "/client/public"), {
     setHeaders: (res, path) => {
