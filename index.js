@@ -1,4 +1,5 @@
 const mazeGen = require("./maze_generation");
+const { Player, Round, Game } = require('./gameobjects');
 
 const express = require("express");
 const { Server } = require("http");
@@ -10,8 +11,12 @@ const server = new Server(app);
 const io = socketIo(server);
 const port = 3000;
 
+//Variables for game Logic and powerups
 const games = {}; // Use an object to store games by their ID
 const hosts = {};
+
+//Variables for game powerups
+
 
 
 // Serve static files from 'client' directory
@@ -47,36 +52,43 @@ io.on('connection', (socket) => {
 
     // Listening for the joinGame event
     socket.on("joinGame", (data) => {
-        const { username, gameId } = data;
-        console.log("new join");
+        const gameId = data.gameId;
+        //const { username, gameId } = data;
+        const player =  new Player(data.gameId,data.username);
+        //console.log("new join");
 
         // Create a new game if it doesn't exist
         if (!games[gameId]) {
-            games[gameId] = { players: [], currentRound: 0, status: "waiting" };
-            console.log(`Game with ID ${gameId} created`);
+            games[gameId] = new Game(gameId);
         }
 
         // Check if the game has already started
         if (games[gameId].status !== "waiting") {
             socket.emit("error", { message: "Game already started. You cannot join." });
+            console.log(`games${games}`);
             return;
         }
 
         // Check if the username is already taken in this game
-        if (games[gameId].players.find((player) => player.name === username)) {
+        if (games[gameId].players.find((player) => player.name === data.username)) {
             socket.emit("error", { message: "Username already taken in this game." });
             return;
         }
 
         // Add the player to the game
-        games[gameId].players.push({ id: socket.id, name: username });
+        
+        // games[gameId].players.push({ id: socket.id, name: username });
+        // socket.join(gameId);
+
+        games[gameId].addPlayer(player);
         socket.join(gameId);
+        
 
         // Emit the waiting event with the current players count
         io.to(gameId).emit("waiting", { playersCount: games[gameId].players.length });
 
         // Emit the gameStateUpdate event
-        io.to(gameId).emit("gameStateUpdate", games[gameId]);
+        //io.to(gameId).emit("gameStateUpdate", games[gameId]);
     });
 
     // Listening for the becomeHost event

@@ -34,7 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             document.getElementById("errorMessage").textContent = "Please enter both Game ID and Username";
         }
+        
+        
     });
+    socket.on("error", (message) => {	
+        document.getElementById("errorMessage").textContent = JSON.stringify(message.message,null,2);	;
+    })
 
     document.getElementById("becomeHost").addEventListener("click", () => {
         const gameId = document.getElementById("gameId").value.trim();
@@ -49,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Socket events
     socket.on("gameStateUpdate", (gameState) => {
         console.log('Received game state update:', gameState);
-        document.getElementById("gameState").textContent = JSON.stringify(gameState, null, 2);
+        document.getElementById("gameState").textContent = JSON.stringify(gameState, null, 1);
     });
 
     socket.on("gameFull", () => {
@@ -140,6 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.moveTo(x, y + cell.cellSize);
                 ctx.lineTo(x, y);
             }
+            
             ctx.strokeStyle = 'green';
             ctx.lineWidth = 5;
             ctx.lineCap = "round";
@@ -259,28 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         prev = { x: ballPosX, y: ballPosY };
     }
-    function renderEndpoint() {
-        gradientAngle += 0.02;
-        const centerX = end.x;
-        const centerY = end.y;
-        const radius = endRadius;
-
-        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-        gradient.addColorStop(0, "black");
-        gradient.addColorStop(1, `rgba(0, 0, 0, 0)`);
-
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(gradientAngle);
-        ctx.translate(-centerX, -centerY);
-
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        ctx.restore();
-    }
-
     // Animation loop
     function animate() {
         updateBallPosition();
@@ -294,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Gyroscope data handling
     window.addEventListener('deviceorientation', (event) => {
-        acceleration.x = event.gamma / 45; // Adjust sensitivity as needed
-        acceleration.y = event.beta / 90;  // Adjust sensitivity as needed
+        acceleration.x = event.gamma / 40; // Adjust sensitivity as needed
+        acceleration.y = event.beta / 85;  // Adjust sensitivity as needed
     });
 });

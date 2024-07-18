@@ -112,13 +112,6 @@ function GenerateMaze(width, height) {
     }
   }
 
-  function drawMaze() {
-    for (let x = 0; x < cols; x++) {
-      for (let y = 0; y < rows; y++) {
-        generatedMaze[x][y].show();
-      }
-    }
-  }
 
   function setup() {
     generatedMaze = mazeGenerator(cols, rows);
