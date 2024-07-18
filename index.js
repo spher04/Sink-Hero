@@ -54,12 +54,13 @@ io.on('connection', (socket) => {
     socket.on("joinGame", (data) => {
         const gameId = data.gameId;
         //const { username, gameId } = data;
-        const player =  new Player(data.gameId,data.username);
+        const player =  new Player(socket.id,data.gameId,data.username);
+        //console.log(`New player with name ${player.name} created `)
         //console.log("new join");
 
         // Create a new game if it doesn't exist
         if (!games[gameId]) {
-            games[gameId] = new Game(gameId);
+            games[gameId] = new Game(gameId); 
         }
 
         // Check if the game has already started
@@ -85,7 +86,8 @@ io.on('connection', (socket) => {
         
 
         // Emit the waiting event with the current players count
-        io.to(gameId).emit("waiting", { playersCount: games[gameId].players.length });
+        //io.to(gameId).emit("waiting", { playersCount: games[gameId].players.length });
+        io.to(gameId).emit("waiting",games[gameId].players)
 
         // Emit the gameStateUpdate event
         //io.to(gameId).emit("gameStateUpdate", games[gameId]);
@@ -189,7 +191,7 @@ const startGame = (gameId) => {
                     colour: colours[index],
                 };
         
-                //console.log(`Emitting gameStart event to player ${player.id} with data:`,dataToEmit);
+                 console.log(`Emitting gameStart event to player ${player.name} with data:`,dataToEmit);
         
                 io.to(player.id).emit("gameStart", dataToEmit);
             } else {

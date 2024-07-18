@@ -63,12 +63,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     socket.on('waiting', (data) => {
+        console.log(`New Players: `, JSON.stringify(data, null, 1));
         document.getElementById('joinSection').style.display = 'none';
-        document.getElementById('waitingMessage').style.display = '';
-        document.getElementById('waitingMessage').innerText = `Waiting for more players... (${data.playersCount}/4)`;
-        document.getElementById('startSection').style.display = data.playersCount >= 2 ? 'block' : 'none';
+        document.getElementById('waitingMessage').style.display = 'block';
+    
+        // Display the game ID at the top
+        const gameIdDisplay = document.getElementById('gameIdDisplay');
+        gameIdDisplay.innerText = `Game ID: `;
+    
+        // Clear the playersList section before updating
+        const playersList = document.getElementById('playersList');
+        playersList.innerHTML = '';
+    
+        // Display the list of players
+        data.forEach(player => {
+            // Create a new div for each player
+            const playerDiv = document.createElement('div');
+            //playerDiv.setAttribute('id', `player`); // Assign an ID to the player div
+            playerDiv.textContent = player.name;
+            playerDiv.style.backgroundColor = '#007bff';
+            playerDiv.style.color = '#ffffff';
+            playerDiv.style.margin = '10px 0';
+            playerDiv.style.padding = '10px';
+            playerDiv.style.border = '1px solid #ffffff';
+            playerDiv.style.borderRadius = '3px';
+    
+            // Append the player div to the playersList
+            playersList.appendChild(playerDiv);
+        });
+    
+        document.getElementById('startSection').style.display = data.length >= 2 ? 'block' : 'none';
         document.getElementById('errorMessage').style.display = 'none';
     });
+    
+    
+    
 
     socket.on("connect", () => {
         console.log('Connected to server');
@@ -274,6 +303,42 @@ document.addEventListener("DOMContentLoaded", () => {
         socket.emit("playerPositionChanged", player); // Send player position to server
         //console.log(player);
         requestAnimationFrame(animate); // Request next frame
+    }
+    function isIOS() {
+        // Check if the user agent contains 'iPhone', 'iPad', or 'iPod'
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }
+    function requestPermission() {
+        // Attempt to request device orientation permission
+        if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            // iOS 13+ and later
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        console.log('Device orientation permission granted');
+                        // Start using device orientation data here
+                    } else {
+                        console.error('Device orientation permission denied');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error requesting device orientation permission:', error);
+                });
+        } else {
+            // For non-iOS devices or older iOS versions
+            console.log('Device orientation permission is not required');
+            // Start using device orientation data here
+        }
+    }
+
+    if (isIOS()) {
+        // Show the permission button if on iOS
+        document.getElementById('permissionButton').style.display = 'block';ssssss
+
+        // Add click event listener to the button
+        document.getElementById('permissionButton').addEventListener('click', () => {
+            requestPermission();
+        });
     }
 
     // Gyroscope data handling

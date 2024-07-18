@@ -68,3 +68,26 @@ h1, gametitle {
 #maze {
     z-index: 2; /* Adjust z-index as needed */
 }
+
+#waitingMessage {
+    background-color: #f3f4f5;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    width: 300px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#waitingMessage h3 {
+    margin-bottom: 20px;
+}
+
+#waitingMessage div {
+    margin: 10px 0;
+    padding: 10px;
+    /*background-color: #007bff;*/
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+}
+

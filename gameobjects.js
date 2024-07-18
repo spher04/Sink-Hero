@@ -1,13 +1,14 @@
 // gameObjects.js
 class Player {
-    constructor(id, name) {
+    constructor(id,gameId, name) {
         this.id = id;
+        this.gameId = gameId;
         this.name = name;
         //this.position = position; // { x: 0, y: 0 }
         this.velocity = { x: 0, y: 0 };
         this.acceleration = { x: 0, y: 0 };
         this.score = 0;
-        this.isSlowed = false;
+        //this.isSlowed = false;
     }
 }
 

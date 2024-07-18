@@ -21,8 +21,12 @@
             <input type="text" id="username" placeholder="Username">
             <button id="joinGame">Join Game</button>
             <button id="becomeHost">Become Host</button>
+            <button id="permissionButton" style="display: none;">Grant Permissions</button>
         </div>
-        <div id="waitingMessage" style="display: none;"></div>
+        <div id="waitingMessage" style="display: none;">
+            <h3 id="gameIdDisplay"></h3>
+            <div id="playersList"></div>
+        </div>
         <div id="startSection" style="display: none;">
             <button id="startGame">Start Game</button>
         </div>
