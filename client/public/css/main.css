@@ -15,11 +15,13 @@ body {
 
 input[type="text"], button {
     padding: 10px;
+    display: inline-block;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-bottom: 10px;
-    /* width: calc(30% - 22px); */ /* Uncomment and adjust width as needed */
+    width: 100%; /* Full width input for better usability */
+    box-sizing: border-box; /* Ensure padding is included in width */
 }
 
 .container {
@@ -28,6 +30,7 @@ input[type="text"], button {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    max-width: 50%;
 }
 
 h1, gametitle {
@@ -56,6 +59,8 @@ h1, gametitle {
 }
 
 .canvas {
+    max-width: 100%;
+    height: auto;
     position: absolute;
     top: calc(50% - 600); /* Adjust top position of canvas */
     left: calc(50% - 780); /* Adjust left position of canvas */
