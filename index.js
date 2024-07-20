@@ -107,11 +107,21 @@ io.on('connection', (socket) => {
 
     // Listening for the startGame event
     socket.on("startGame", (gameId) => {
-        if (games[gameId] && games[gameId].status === "waiting" && games[gameId].players.length >= 2) {
-            games[gameId].status = "started";
+        const game = games[gameId];
+        if (game && game.status === "waiting" && game.players.length >= 2) {
+            game.status = "started";
             startGame(gameId);
+            
+            if (game.currentRound) {
+                console.log("New round started successfully:");
+                console.log("Current Round ID: " + game.currentRound.id);
+                console.log("Players in Current Round: " + game.currentRound.players.length);
+            } else {
+                console.error("Failed to start a new round. currentRound is undefined.");
+            }
             //io.to(gameId).emit("gameStart", games[gameId]);
-            console.log(`Game with game ID: ${gameId} started`);
+            // console.log(`The current round from game ${gameId} is :)`)
+            // console.log(`Game with game ID: ${gameId} started`);
         } else {
             socket.emit("error", { message: "Not enough players to start the game." });
         }
