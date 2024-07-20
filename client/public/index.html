@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sink Hero</title>
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/Round.css">
     <script src="/socket.io/socket.io.js"></script>
     <script defer src="/client/js/client.js"></script>
     <script>
@@ -36,6 +37,19 @@
         <div id="errorMessage" style="color: red"></div>
         <pre id="gameState"></pre>
     </div>
-    <!-- Additional UI elements can be added here -->
+
+    <!-- <div id="currentgameinfo">
+        <h2>Game Information</h2>
+        <p>Game ID: <span id="currentGameId"></span></p>
+        <p>Current Player: <span id="currentPlayer"></span></p>
+        <p>Score: <span id="currentScore"></span></p>
+         <p>Time left: <span id="currentTime"></span></p>
+    </div> -->
+    <div id="round-pop-up" class="d-flex">
+        <!-- <h2>Game Information</h2> -->
+        <div class="points-table">
+            <!-- Points cards will be inserted here dynamically -->
+        </div>
+    </div>
 </body>
 </html>

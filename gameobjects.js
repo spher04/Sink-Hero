@@ -8,6 +8,8 @@ class Player {
         this.velocity = { x: 0, y: 0 };
         this.acceleration = { x: 0, y: 0 };
         this.score = 0;
+        this.hasReachedEnd = false;
+        //this.finishedPlayers = [];
         //this.isSlowed = false;
     }
 }
@@ -17,18 +19,19 @@ class Round {
         this.id = id;
         this.players = players; // array of Player objects
         this.isOngoing = false;
-        this.startTime = null;
-        this.endTime = null;
+        this.finishedPlayers = [];
+        // this.startTime = null;
+        // this.endTime = null;
     }
 
     start() {
         this.isOngoing = true;
-        this.startTime = new Date();
+        //this.startTime = new Date();
     }
 
     end() {
         this.isOngoing = false;
-        this.endTime = new Date();
+        //this.endTime = new Date();
     }
 }
 
@@ -38,6 +41,7 @@ class Game {
         this.players = [];
         this.rounds = [];
         this.status = "waiting";
+        this.currentRound = null;
     }
 
     addPlayer(player) {
@@ -46,6 +50,7 @@ class Game {
 
     startNewRound() {
         const newRound = new Round(this.rounds.length + 1, this.players);
+        this.currentRound = newRound; // Correct assignment
         this.rounds.push(newRound);
         newRound.start();
     }
@@ -57,5 +62,6 @@ class Game {
         }
     }
 }
+
 
 module.exports = { Player, Round, Game };

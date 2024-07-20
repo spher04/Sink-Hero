@@ -180,7 +180,37 @@ document.addEventListener("DOMContentLoaded", () => {
             ctx.lineCap = "round";
             ctx.stroke();
         };
-
+        socket.on('playerFinished', (finishedPlayers) => {
+            console.log(`event triggered`)
+            console.log(`Finished players: ${JSON.stringify(finishedPlayers)}`);
+        
+            // Clear the existing points table
+            document.querySelector('points-table').innerHTML = '';
+        
+            // Iterate through the finished players and create their cards
+            finishedPlayers.forEach((player, index) => {
+                
+                const cardHtml = `
+                    <div class="points-card">ss
+                        <h2>Game Information</h2>
+                        <h3>${index + 1}st</h3>
+                        <p class="points">${player.score} <span>POINTS</span></p>
+                        <ul>
+                            <li>Time: ${player.time}</li>
+                            <li>Player ID: ${player.playerId}</li>
+                            <li>Game ID: ${player.gameId}</li>
+                            <li>Round: ${player.round}</li>
+                        </ul>
+                    </div>
+                `;
+                // Append the card to the points table
+                document.querySelector('points-table').innerHTML += cardHtml;
+            });
+        
+            // Show the round pop-up
+            document.getElementById('round-pop-up').style.display = 'flex';
+        });
+        
         // Draw each cell's walls
         for (let i = 0; i < maze.length; i++) {
             for (let j = 0; j < maze[i].length; j++) {
@@ -255,13 +285,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Check if player reached the end point
         if (Math.abs((player.x * cellSize) - end.x) <= endRadius && Math.abs((player.y * cellSize) - end.y) <= endRadius) {
-            if (!hasWon) {
-                socket.emit('declareWinner', player);
-                document.getElementById('maze').style.display = 'none';
+            if (!player.hasReachedEnd) {
+                //socket.emit('declareWinner', player);
+                document.getElementById('mazeCanvas').style.display = 'none';
                 document.getElementById('ball').style.display = 'none';
+                //Emits a message to the sever when the player reached the end point
+                socket.emit("hasFinished",player)
 
-                document.getElementById('winner').style.display = 'flex';
-                hasWon = true;
+                //document.getElementById('winner').style.display = 'flex';
+                player.hasReachedEnd = true;
             }
         }
     }
