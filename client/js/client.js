@@ -8,11 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
     const ctx = canvas.getContext("2d");
-    const cellSize = 60;  // Adjust as needed
-    const ballRadius = cellSize / 6;
-    const endRadius = cellSize / 3;
-    const cols = Math.floor(canvas.width / cellSize);
-    const rows = Math.floor(canvas.height / cellSize);
+    let cellSize;  // Adjust as needed
+    let ballRadius;
+    let endRadius ;
+    let cols ;
+    let rows  ;
 
     let generatedMaze;
 
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let acceleration = { x: 0, y: 0 };
     const friction = 0.9;
     let lastUpdate = Date.now();
-    let end = { x: canvas.width / 2, y: (rows * cellSize + cellSize) / 2 };
+    let end;
     let previous_positions = {};
 
     // Event listeners for buttons
@@ -50,6 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const gameId = document.getElementById("gameId").value.trim();
         socket.emit("startGame", gameId);
     });
+
+    document.getElementById("next-round-button").addEventListener("click",() => {
+        //console.log("next button clicked")
+        socket.emit('next-round',player);
+    })
 
     // Socket events
     socket.on("gameStateUpdate", (gameState) => {
@@ -120,6 +125,12 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('mazeCanvas').style.display = 'block';
         document.getElementById('ball').style.display = 'block';
 
+        document.getElementById('container').style.display = 'none'
+        document.getElementById('next-round-button').style.display = 'none'
+        document.getElementById('winner').style.display = 'block';
+
+
+
         player = data; // Set player data
         requestAnimationFrame(animate); // Start animation loop
     });
@@ -146,7 +157,16 @@ document.addEventListener("DOMContentLoaded", () => {
         previous_positions[data.playerId] = { x: data.x * 60, y: data.y * 60 };
     });
 
+    socket.on("sendMazeSize", (data) => {
+        cellSize = data.cellSize; // Assign cellSize from the data received
+        cols = Math.floor(canvas.width / data.cellSize);
+        rows = Math.floor(canvas.height / data.cellSize);
+        end = { x: canvas.width / 2, y: (rows * data.cellSize + data.cellSize) / 2 };
+        ballRadius = data.cellSize / 6;
+        endRadius = data.cellSize / 3;
 
+    });
+    
 
     socket.on('sendMaze', (maze) => {
         console.log('Maze received from server');
@@ -181,11 +201,26 @@ document.addEventListener("DOMContentLoaded", () => {
             ctx.stroke();
         };
         socket.on('playerFinished', (finishedPlayers) => {
-            console.log('event triggered');
-            
-            // Get the points table element
+            console.log('Event triggered'); // Debugging line to confirm event firing
+        
+            // Get the points table and winner container elements
             const pointsTable = document.querySelector('#winner');
-            
+            const nextRoundButton = document.getElementById('next-round-button');
+            // const winnerContainer = document.getElementById('winner-container');
+        
+            // if (!pointsTable) {
+            //     console.error('Points table element not found');
+            //     return;
+            // }
+            // if (!nextRoundButton) {
+            //     console.error('Next round button element not found');
+            //     return;
+            // }
+            // if (!winnerContainer) {
+            //     console.error('Winner container element not found');
+            //     return;
+            // }
+        
             // Clear the existing points table
             pointsTable.innerHTML = '';
         
@@ -204,15 +239,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         <li>Game ID: ${player.gameId}</li>
                     </ul>
                 `;
-                
         
                 // Append the card to the points table
                 pointsTable.appendChild(card);
             });
-            document.getElementById("next-round-button").style.display = 'block'
-            // Show the points table
+        
+            // Show the winner container and next round button
+            winnerContainer.style.display = 'flex';
+            nextRoundButton.style.display = 'block';
             pointsTable.style.display = 'flex';
         });
+        
         
         
         
