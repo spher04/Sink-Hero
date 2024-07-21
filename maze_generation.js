@@ -1,5 +1,11 @@
-function GenerateMaze(width, height) {
-  const cellSize = 60;
+function GenerateMaze(width, height,round) {
+  let cellSize = 60;
+  if(round === 2){
+    cellSize = 40;
+  }
+  else if(round === 3){
+    cellSize = 30;
+  }
   let generatedMaze;
 
   const cols = Math.floor(width / cellSize);
