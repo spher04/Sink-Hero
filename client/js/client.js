@@ -181,35 +181,42 @@ document.addEventListener("DOMContentLoaded", () => {
             ctx.stroke();
         };
         socket.on('playerFinished', (finishedPlayers) => {
-            console.log(`event triggered`)
-            console.log(`Finished players: ${JSON.stringify(finishedPlayers)}`);
-        
+            console.log('event triggered');
+            
+            // Get the points table element
+            const pointsTable = document.querySelector('#winner');
+            
             // Clear the existing points table
-            document.querySelector('points-table').innerHTML = '';
+            pointsTable.innerHTML = '';
         
             // Iterate through the finished players and create their cards
             finishedPlayers.forEach((player, index) => {
-                
-                const cardHtml = `
-                    <div class="points-card">ss
-                        <h2>Game Information</h2>
-                        <h3>${index + 1}st</h3>
-                        <p class="points">${player.score} <span>POINTS</span></p>
-                        <ul>
-                            <li>Time: ${player.time}</li>
-                            <li>Player ID: ${player.playerId}</li>
-                            <li>Game ID: ${player.gameId}</li>
-                            <li>Round: ${player.round}</li>
-                        </ul>
-                    </div>
-                `;
-                // Append the card to the points table
-                document.querySelector('points-table').innerHTML += cardHtml;
-            });
+                let card = document.createElement("div");
+                card.classList.add("points-card");
+                card.classList.add(`card-${index + 1}`); // Use index + 1 to differentiate cards
         
-            // Show the round pop-up
-            document.getElementById('round-pop-up').style.display = 'flex';
+                // Create the card's HTML content
+                card.innerHTML = `
+                    <h3>${index + 1}${index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'}</h3>
+                    <p class="points">${player.score}<span> POINTS</span></p>
+                    <ul>
+                        <li>Name: ${player.name}</li>
+                        <li>Game ID: ${player.gameId}</li>
+                    </ul>
+                `;
+                
+        
+                // Append the card to the points table
+                pointsTable.appendChild(card);
+            });
+            document.getElementById("next-round-button").style.display = 'block'
+            // Show the points table
+            pointsTable.style.display = 'flex';
         });
+        
+        
+        
+        
         
         // Draw each cell's walls
         for (let i = 0; i < maze.length; i++) {
@@ -365,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isIOS()) {
         // Show the permission button if on iOS
-        document.getElementById('permissionButton').style.display = 'block';ssssss
+        document.getElementById('permissionButton').style.display = 'block';
 
         // Add click event listener to the button
         document.getElementById('permissionButton').addEventListener('click', () => {

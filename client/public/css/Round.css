@@ -1,0 +1,197 @@
+
+#winner-container {
+    background-color: #f0f0f0; /* Light gray background */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 1200px; /* Adjust max-width as needed */
+    display: flex;
+    flex-direction: column; /* Stack contents vertically */
+    align-items: center; /* Center contents horizontally */
+}
+
+#winner {
+    display: flex;
+    flex-direction: row; /* Ensure cards are displayed in a row */
+    flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
+    justify-content: center; /* Center the cards horizontally */
+    gap: 20px; /* Space between cards */
+    padding: 10px;
+    box-sizing: border-box;
+}
+#next-round-button {
+    background-color: #007bff; /* Blue background */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 20px; /* Add space above the button */
+    transition: background-color 0.3s;
+}
+
+#next-round-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.points-card {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center; /* Center text inside the card */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 200px; /* Fixed width for each card */
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+    animation: wiggle 2s linear infinite;
+    transform-origin: 50% 5em;
+}
+
+.points-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column; /* Arrange elements vertically */
+    align-items: center; /* Center elements horizontally */
+    justify-content: center; /* Center elements vertically */
+}
+
+.points-card h3 {
+    margin: 0;
+    padding: 10px 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.points-card .points {
+    font-size: 2em;
+    color: #333;
+}
+
+.points-card .points span {
+    font-size: 0.5em;
+    color: #666;
+}
+
+.points-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.points-card ul li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9em;
+    color: #555;
+}
+
+#next-round-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+#next-round-button:hover {
+    background-color: #218838;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    #winner-container {
+        width: 90%;
+    }
+
+    .points-card {
+        width: 80%;
+        margin-bottom: 20px;
+    }
+
+    #next-round-button {
+        font-size: 1em;
+        padding: 12px 24px;
+    }
+}
+
+@media (max-width: 414px) {
+    .points-card {
+        width: 95%;
+        margin-bottom: 20px;
+    }
+
+    .points-card h3 {
+        font-size: 1.2em;
+    }
+
+    .points-card .points {
+        font-size: 1.5em;
+    }
+
+    .points-card ul li {
+        font-size: 0.8em;
+    }
+
+    #next-round-button {
+        font-size: 0.9em;
+        padding: 10px 20px;
+    }
+}
+
+/* Wiggle Animation */
+@keyframes wiggle {
+  0%, 7% {
+    transform: rotateZ(0);
+  }
+  15% {
+    transform: rotateZ(-10deg);
+  }
+  20% {
+    transform: rotateZ(8deg);
+  }
+  25% {
+    transform: rotateZ(-8deg);
+  }
+  30% {
+    transform: rotateZ(4deg);
+  }
+  35% {
+    transform: rotateZ(-3deg);
+  }
+  40%, 100% {
+    transform: rotateZ(0);
+  }
+}
+
+/* Animation delays for each card */
+.card-1 {
+  animation-delay: 0s;
+}
+
+.card-2 {
+  animation-delay: 0.5s;
+}
+
+.card-3 {
+  animation-delay: 1s;
+}
+
+.card-4 {
+  animation-delay: 1.5s;
+}
+
+/* Class to stop the wiggle animation */
+.stop-wiggle {
+    animation: none;
+}

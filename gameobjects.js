@@ -9,6 +9,9 @@ class Player {
         this.acceleration = { x: 0, y: 0 };
         this.score = 0;
         this.hasReachedEnd = false;
+        this.x = 0;
+        this.y = 0;
+        this.colour = null;
         //this.finishedPlayers = [];
         //this.isSlowed = false;
     }

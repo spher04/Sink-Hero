@@ -110,15 +110,15 @@ io.on('connection', (socket) => {
         const game = games[gameId];
         if (game && game.status === "waiting" && game.players.length >= 2) {
             game.status = "started";
-            startGame(gameId);
+            startGame(game);
             
-            if (game.currentRound) {
-                console.log("New round started successfully:");
-                console.log("Current Round ID: " + game.currentRound.id);
-                console.log("Players in Current Round: " + game.currentRound.players.length);
-            } else {
-                console.error("Failed to start a new round. currentRound is undefined.");
-            }
+            // if (game.currentRound) {
+            //     console.log("New round started successfully:");
+            //     console.log("Current Round ID: " + game.currentRound.id);
+            //     console.log("Players in Current Round: " + game.currentRound.players.length);
+            // } else {
+            //     console.error("Failed to start a new round. currentRound is undefined.");
+            // }
             //io.to(gameId).emit("gameStart", games[gameId]);
             // console.log(`The current round from game ${gameId} is :)`)
             // console.log(`Game with game ID: ${gameId} started`);
@@ -143,6 +143,7 @@ io.on('connection', (socket) => {
     // Handle player position changes
     socket.on("playerPositionChanged", (data) => {
         const game = games[data.gameId];
+        //console.log(game);
         //console.log(`The player is:` ,JSON.stringify(data,null,2) )
         if(games[data.gameId]){
             const game = games[data.gameId];
@@ -167,8 +168,7 @@ io.on('connection', (socket) => {
     socket.on("hasFinished", (player) => {
         console.log(`hasFinished triggered for player ${player.name}`);
         const game = games[player.gameId];
-        console.log(`current game is `,JSON.stringify(game,null,2))
-    
+        //console.log(game)
         if (!game) {
             console.error(`Game with ID ${player.gameId} not found`);
             return;
@@ -179,9 +179,19 @@ io.on('connection', (socket) => {
             return;
         }
     
-        console.log("New player has finished round:");
-        console.log("Current Round ID: " + game.currentRound.id);
-        console.log("Players in Current Round: " + game.currentRound.players.length);
+        // Ensure finishedPlayers is an array
+        if (!Array.isArray(game.currentRound.finishedPlayers)) {
+            game.currentRound.finishedPlayers = [];
+        }
+    
+        // Add the player to the list of finished players for the current round
+        game.currentRound.finishedPlayers.push(player);
+        console.log(player)
+    
+        console.log("Current Round ID:", game.currentRound.id);
+        console.log("Players in Current Round:", game.currentRound.players.length);
+        console.log("Is Current Round Ongoing?:", game.currentRound.isOngoing);
+        console.log("Finished Players in Current Round:", game.currentRound.finishedPlayers.length);
     
         // Adjust the player's score based on the number of rounds
         if (game.rounds.length < 2) {
@@ -190,54 +200,49 @@ io.on('connection', (socket) => {
             player.score += 20;
         }
     
-        // Ensure finishedPlayers is an array
-        if (!Array.isArray(game.currentRound.finishedPlayers)) {
-            game.currentRound.finishedPlayers = [];
-        }
-    
-        // Add the player to the list of finished players for the current round
-        game.currentRound.finishedPlayers.push(player);
-    
         // Emit the updated list of finished players to all players who have finished
-        game.currentRound.finishedPlayers.forEach(finishedPlayer => {
-            console.log(`sending info to player ${finishedPlayer.id}`);
+        game.currentRound.finishedPlayers.forEach((finishedPlayer) => {
+            console.log(`Sending info to player ${finishedPlayer.name}`);
+            console.log(finishedPlayer);
             io.to(finishedPlayer.id).emit("playerFinished", game.currentRound.finishedPlayers);
         });
     });
     
+    
+    
 });
 
-const startGame = (gameId) => {
+const startGame = (game) => {
     let generatedMaze = mazeGen.GenerateMaze(780, 600);
-    const game = games[gameId];
+    //console.log(game);
 
     if (game) {
         game.startNewRound(); // Correctly call startNewRound on the Game instance
+
         // if (game.currentRound) {
         //     console.log("New round started successfully:");
         //     console.log("Current Round ID: " + game.currentRound.id);
         //     console.log("Players in Current Round: " + game.currentRound.players.length);
         // } else {
         //     console.error("Failed to start a new round. currentRound is undefined.");
+        //     return;
         // }
     } else {
-        console.error(`Game with ID ${gameId} not found`);
+        console.error(`Game not found`);
         return;
     }
 
     // Emit the generated maze to all players and the host
     game.players.forEach((player) => {
         if (player && player.id) {
-            
             io.to(player.id).emit("sendMaze", generatedMaze);
         } else {
-            console.error(`Player in game ${gameId} is undefined or has no ID.`);
+            console.error(`Player in game is undefined or has no ID.`);
         }
     });
 
     if (game.players.length >= 2) {
         game.status = "in-progress";
-        game.currentRound = 0;
 
         let colours = ["#ff0000", "#ffff00", "#ff00ff", "#0000ff"];
         let startPositions = [
@@ -249,48 +254,59 @@ const startGame = (gameId) => {
 
         game.players.forEach((player, index) => {
             if (player && player.id) {
-                const dataToEmit = {
-                    gameId,
-                    playerId: index,
-                    name: player.name,
-                    x: startPositions[index].x / 60,
-                    y: startPositions[index].y / 60,
-                    colour: colours[index],
-                };
-        
-                 //console.log(`Emitting gameStart event to player ${player.name} with data:`,dataToEmit);
-        
-                io.to(player.id).emit("gameStart", dataToEmit);
+                player.x = startPositions[index].x / 60;
+                player.y = startPositions[index].y / 60;
+                player.colour = colours[index];
+                // const dataToEmit = {
+                //     gameId: game.id,
+                //     playerId: index,
+                //     id: player.id,
+                //     name: player.name,
+                //     x: startPositions[index].x / 60,
+                //     y: startPositions[index].y / 60,
+                //     colour: colours[index],
+                // };
+
+                io.to(player.id).emit("gameStart", player);
             } else {
-                console.error(`Player in game ${gameId} is undefined or has no ID.`);
+                console.error(`Player in game is undefined or has no ID.`);
             }
         });
-        
 
         console.log(
-            `Game ${gameId} started with players:`,
-            games[gameId].players.map((p) => p.id + " (" + p.name + ")")
+            `Game ${game.id} started with players:`,
+            game.players.map((p) => p.id + " (" + p.name + ")")
         );
-    } else {
-        endGame(gameId);
-    }
-    const endGame =gameId => {
-        console.log(`Game ${gameId} ended.`);
-        games[gameId].Round.endCurrentRound();
-    }
-    const NextRound =gameId =>{
-        games[gameId].Round.endCurrentRound();
-
-        if(games[gameId].rounds.length > 3){
-            endGame(gameId);
-            return;
-        }
-        else{
-            console.log(`Starting round ${games[gameId].rounds + 1} of game ${gameId}`);
-            games[gameId].Round.startNewRound();
-        }
     }
 };
+
+// const endGame = (gameId) => {
+//     console.log(`Game ${gameId} ended.`);
+//     const game = games[gameId];
+//     if (game) {
+//         game.endCurrentRound();
+//     } else {
+//         console.error(`Game with ID ${gameId} not found`);
+//     }
+// };
+
+const nextRound = (gameId) => {
+    const game = games[gameId];
+    if (game) {
+        game.endCurrentRound();
+
+        if (game.rounds.length >= 3) {
+            endGame(gameId);
+            return;
+        } else {
+            console.log(`Starting round ${game.rounds.length + 1} of game ${gameId}`);
+            game.startNewRound();
+        }
+    } else {
+        console.error(`Game with ID ${gameId} not found`);
+    }
+};
+
 
 const endGame = (gameId) => {
     // Your logic to end the game
