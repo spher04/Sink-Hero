@@ -200,6 +200,10 @@ io.on('connection', (socket) => {
             } else if (playerPosition === 3) {
                 player.score += 20; // Bonus for finishing third
             }
+            else 
+            {
+                player.score += 10;
+            }
         } else {
             player.score += 20;
             if (playerPosition === 1) {
@@ -208,6 +212,9 @@ io.on('connection', (socket) => {
                 player.score += 50; // Higher bonus for more rounds
             } else if (playerPosition === 3) {
                 player.score += 30; // Higher bonus for more rounds
+            }
+            else{
+                player.score += 10;
             }
         }
     

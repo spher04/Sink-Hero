@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('mazeCanvas').style.display = 'block';
         document.getElementById('ball').style.display = 'block';
 
-        document.getElementById('container').style.display = 'none'
+        document.getElementById('winner-container').style.display = 'none'
         document.getElementById('next-round-button').style.display = 'none'
         document.getElementById('winner').style.display = 'block';
 
@@ -206,20 +206,20 @@ document.addEventListener("DOMContentLoaded", () => {
             // Get the points table and winner container elements
             const pointsTable = document.querySelector('#winner');
             const nextRoundButton = document.getElementById('next-round-button');
-            // const winnerContainer = document.getElementById('winner-container');
+            const winnerContainer = document.getElementById('winner-container');
         
-            // if (!pointsTable) {
-            //     console.error('Points table element not found');
-            //     return;
-            // }
-            // if (!nextRoundButton) {
-            //     console.error('Next round button element not found');
-            //     return;
-            // }
-            // if (!winnerContainer) {
-            //     console.error('Winner container element not found');
-            //     return;
-            // }
+            if (!pointsTable) {
+                console.error('Points table element not found');
+                return;
+            }
+            if (!nextRoundButton) {
+                console.error('Next round button element not found');
+                return;
+            }
+            if (!winnerContainer) {
+                console.error('Winner container element not found');
+                return;
+            }
         
             // Clear the existing points table
             pointsTable.innerHTML = '';
@@ -249,12 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
             nextRoundButton.style.display = 'block';
             pointsTable.style.display = 'flex';
         });
-        
-        
-        
-        
-        
-        
         // Draw each cell's walls
         for (let i = 0; i < maze.length; i++) {
             for (let j = 0; j < maze[i].length; j++) {

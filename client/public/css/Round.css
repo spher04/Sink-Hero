@@ -1,15 +1,15 @@
 /* Container for the winner section */
 #winner-container {
-    background-color: #a19e9e; /* Light gray background */
+    text-align: center;
+    background-color: #fff; /* White background for container */
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 80%;
-    max-width: 1200px; /* Adjust max-width as needed */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    max-height: 50%;
     display: flex;
-    flex-direction: column; /* Stack contents vertically */
-    align-items: center; /* Center contents horizontally */
-    justify-content: center; /* Center contents vertically */
+    flex-direction: column; /* Ensures that the button is at the bottom */
+    align-items: center;
+    justify-content: space-between; /* Ensures space between cards and button */
 }
 
 /* Container for the cards */
@@ -21,6 +21,7 @@
     gap: 20px; /* Space between cards */
     padding: 10px;
     box-sizing: border-box;
+    flex: 1; /* Allow it to grow to fill space */
 }
 
 /* Style for the next round button */
@@ -135,6 +136,7 @@
     #next-round-button {
         font-size: 0.9em;
         padding: 10px 20px;
+        max-width: 50%;
     }
 }
 
