@@ -111,17 +111,6 @@ io.on('connection', (socket) => {
         if (game && game.status === "waiting" && game.players.length >= 2) {
             game.status = "started";
             startGame(game);
-            
-            // if (game.currentRound) {
-            //     console.log("New round started successfully:");
-            //     console.log("Current Round ID: " + game.currentRound.id);
-            //     console.log("Players in Current Round: " + game.currentRound.players.length);
-            // } else {
-            //     console.error("Failed to start a new round. currentRound is undefined.");
-            // }
-            //io.to(gameId).emit("gameStart", games[gameId]);
-            // console.log(`The current round from game ${gameId} is :)`)
-            // console.log(`Game with game ID: ${gameId} started`);
         } else {
             socket.emit("error", { message: "Not enough players to start the game." });
         }
@@ -297,6 +286,7 @@ const startGame = (game) => {
 
                 // Emit game start information to the player
                 io.to(player.id).emit("gameStart",player);
+                io.to(player.id).emit("GameData",game)
             } else {
                 console.error('Player in game is undefined or has no ID.');
             }
@@ -318,14 +308,15 @@ const nextRound = (game) => {
 
         if (game.rounds.length >= 3) {
             endGame(game);
-            return;
+            game.players.forEach(player => {
+                io.to(player.id).emit("gameEnd", player);
+            });
         } else {
             console.log(`Starting round ${game.rounds.length + 1} of game ${game.gameId}`);
-            // game.startNewRound();
-            startGame(game)
+            startGame(game);
         }
     } else {
-        console.error(`Game with ID ${gameId} not found`);
+        console.error(`Game with ID ${game} not found`);
     }
 };
 
