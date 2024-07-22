@@ -41,6 +41,33 @@
     background-color: #0056b3; /* Darker blue on hover */
 }
 
+#gameOverMessage {
+    display: none;
+    text-align: center;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+#playAgainButton {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+#playAgainButton:hover {
+    background-color: #218838;
+}
+
 /* Style for the cards */
 .points-card {
     background: #fff;

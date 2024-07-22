@@ -20,10 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let player = null;
     let velocity = { x: 0, y: 0 };
     let acceleration = { x: 0, y: 0 };
-    const friction = 0.9;
+    const friction = 0.8;
     let lastUpdate = Date.now();
     let end;
     let previous_positions = {};
+    let sensitivity = 75;
 
     // Event listeners for buttons
     document.getElementById("joinGame").addEventListener("click", () => {
@@ -50,6 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const gameId = document.getElementById("gameId").value.trim();
         socket.emit("startGame", gameId);
     });
+
+    document.getElementById("playAgainButton").addEventListener("click", () => {
+        socket.emit('startGame',player.gameId);
+    })
 
     document.getElementById("next-round-button").addEventListener("click",() => {
         //console.log("next button clicked")
@@ -113,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     socket.on('gameStart', (data) => {
-        console.log(`player data reveived from the server : `, JSON.stringify(data,null,2))
+        //console.log(`player data reveived from the server : `, JSON.stringify(data,null,2))
         // Hide UI elements and display game canvas
         document.getElementById('popup').style.display = 'none';
         document.getElementById('gameInfo').setAttribute('data-game-id', data.gameId);
@@ -128,6 +133,18 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('winner-container').style.display = 'none'
         document.getElementById('next-round-button').style.display = 'none'
         document.getElementById('winner').style.display = 'block';
+
+        socket.on("game",game => {
+            if(game.rounds){
+                previousRoundData(game)
+                if(game.rounds.length + 1 === 2){
+                    sensitivity = 70;
+                }
+                else if(game.rounds.length + 1 === 3 ){
+                    sensitivity = 60;
+                }
+            }
+        })
 
 
 
@@ -249,6 +266,16 @@ document.addEventListener("DOMContentLoaded", () => {
             nextRoundButton.style.display = 'block';
             pointsTable.style.display = 'flex';
         });
+
+        socket.on('gameEnd', (player) => {
+            // Show the game over message
+            document.getElementById('gameOverMessage').style.display = 'block';
+            document.getElementById('gameOverMessage').textContent = `Game Over!`;
+
+            document.getElementById("playAgainButton").style.display = 'block';
+            document.getElementById("next-round-button").style.display = 'none'
+        });
+
         // Draw each cell's walls
         for (let i = 0; i < maze.length; i++) {
             for (let j = 0; j < maze[i].length; j++) {
@@ -262,6 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function checkCollisions(newX, newY) {
     const cellX = Math.floor(newX);
     const cellY = Math.floor(newY);
+    let bouncefactor = 1;
 
     if (newX < 0 || newX >= cols || newY < 0 || newY >= rows) {
         return { newX: player.x, newY: player.y };
@@ -271,13 +299,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (velocity.x > 0) {
         if (generatedMaze[cellX][cellY].walls.right && (newX + ballRadius / cellSize) > (cellX + 1)) {
             newX = cellX + 1 - ballRadius / cellSize;
-            velocity.x = -velocity.x; // Reverse horizontal velocity
+            velocity.x = -velocity.x * bouncefactor; // Reverse horizontal velocity
         }
     }
     else if (velocity.x < 0) {
         if (generatedMaze[cellX][cellY].walls.left && (newX - ballRadius / cellSize) < cellX) {
             newX = cellX + ballRadius / cellSize;
-            velocity.x = -velocity.x; // Reverse horizontal velocity
+            velocity.x = -velocity.x * bouncefactor; // Reverse horizontal velocity
         }
     }
 
@@ -285,13 +313,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (velocity.y > 0) {
         if (generatedMaze[cellX][cellY].walls.bottom && (newY + ballRadius / cellSize) > (cellY + 1)) {
             newY = cellY + 1 - ballRadius / cellSize;
-            velocity.y = -velocity.y; // Reverse vertical velocity
+            velocity.y = -velocity.y * bouncefactor; // Reverse vertical velocity
         }
     }
     else if (velocity.y < 0) {
         if (generatedMaze[cellX][cellY].walls.top && (newY - ballRadius / cellSize) < cellY) {
             newY = cellY + ballRadius / cellSize;
-            velocity.y = -velocity.y; // Reverse vertical velocity
+            velocity.y = -velocity.y *bouncefactor; // Reverse vertical velocity
         }
     }
 
@@ -336,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     let prev;
-
+    //let previousEndPoint = { x: null, y: null };
     // Function to draw ball on canvas
     function drawBall() {
         let canvas = document.getElementById("ball");
@@ -351,7 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Draw end point
         ctx.beginPath();
         ctx.arc(end.x, end.y, endRadius, 0, Math.PI * 2);
-        ctx.fillStyle = 'gold';
+        ctx.fillStyle = 'black';
         ctx.fill();
         ctx.closePath();
 
@@ -373,6 +401,19 @@ document.addEventListener("DOMContentLoaded", () => {
         socket.emit("playerPositionChanged", player); // Send player position to server
         //console.log(player);
         requestAnimationFrame(animate); // Request next frame
+    }
+    const previousRoundData = (game) => {
+        const canvas = document.getElementById("ball");
+        const ctx = canvas.getContext("2d");
+        //clear previouse endpoint
+        ctx.clearRect(
+            previousEndPoint.x - endRadius - 1,
+            previousEndPoint.y - endRadius - 1,
+            endRadius * 2 + 2,
+            endRadius * 2 + 2
+        );
+
+
     }
     function isIOS() {
         // Check if the user agent contains 'iPhone', 'iPad', or 'iPod'
@@ -413,7 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Gyroscope data handling
     window.addEventListener('deviceorientation', (event) => {
-        acceleration.x = event.gamma / 40; // Adjust sensitivity as needed
-        acceleration.y = event.beta / 85;  // Adjust sensitivity as needed
+        acceleration.x = event.gamma / sensitivity; // Adjust sensitivity as needed
+        acceleration.y = event.beta / sensitivity;  // Adjust sensitivity as needed
     });
 });
