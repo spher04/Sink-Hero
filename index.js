@@ -285,8 +285,9 @@ const startGame = (game) => {
                 player.colour = colours[index];
 
                 // Emit game start information to the player
+                io.to(player.id).emit("GameInfo",game);
                 io.to(player.id).emit("gameStart",player);
-                io.to(player.id).emit("GameData",game)
+                
             } else {
                 console.error('Player in game is undefined or has no ID.');
             }

@@ -13,8 +13,25 @@
 </head>
 <body>
     <!-- Game canvas and UI elements -->
-    <canvas class="canvas" id="mazeCanvas" style="display: none; border: 1px solid black" width="780" height="600"></canvas>
-    <canvas class="canvas" id="ball" style="display: none; border: 1px solid black" width="780" height="600"></canvas>
+    <div id="game-container" style="display: none;">
+        <div class="info-bar">
+          <div class="player-info">
+            <span class="label">Player:</span> <span id="player-name"></span>
+          </div>
+          <div class="player-info">
+            <span class="label">Color:</span> <span id="player-color">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <div class="player-info">
+            <span class="label">Points:</span> <span id="player-points"></span>
+          </div>
+          <div class="player-info">
+            <span class="label">Round:</span> <span id="current-round"></span>
+          </div>
+        </div>
+            <canvas class="canvas" id="mazeCanvas" style="display: none; border: 1px solid black" width="780" height="600"></canvas>
+            <canvas class="canvas" id="ball" style="display: none; border: 1px solid black" width="780" height="600"></canvas>
+      </div>
+
     <div class="container" id="popup">
         <h1>Sink Hero</h1>
         <div id="joinSection">

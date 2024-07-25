@@ -106,9 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('errorMessage').style.display = 'none';
     });
     
-    
-    
-
     socket.on("connect", () => {
         console.log('Connected to server');
     });
@@ -117,8 +114,21 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log('Disconnected from server');
     });
 
+    socket.on("GameInfo",game => {
+        if(game.rounds){
+            //previousRoundData(game)
+            if(game.rounds.length + 1 === 2){
+                sensitivity = 70;
+            }
+            else if(game.rounds.length + 1 === 3 ){
+                sensitivity = 60;
+            }
+        }
+        updateGameInfo(game);
+    })
+
     socket.on('gameStart', (data) => {
-        //console.log(`player data reveived from the server : `, JSON.stringify(data,null,2))
+
         // Hide UI elements and display game canvas
         document.getElementById('popup').style.display = 'none';
         document.getElementById('gameInfo').setAttribute('data-game-id', data.gameId);
@@ -134,23 +144,16 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('next-round-button').style.display = 'none'
         document.getElementById('winner').style.display = 'block';
 
-        socket.on("game",game => {
-            if(game.rounds){
-                previousRoundData(game)
-                if(game.rounds.length + 1 === 2){
-                    sensitivity = 70;
-                }
-                else if(game.rounds.length + 1 === 3 ){
-                    sensitivity = 60;
-                }
-            }
-        })
 
 
+        
+
+        
 
         player = data; // Set player data
         requestAnimationFrame(animate); // Start animation loop
     });
+
     socket.on("playerPositionChanged", (data) => {
         console.log(`position of player with player id ${data.name} received`);
         let canvas = document.getElementById("ball");
@@ -363,6 +366,31 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
+
+    const updateGameInfo = (game) => {
+        // Display the game container
+        document.getElementById("game-container").style.display = 'block';
+    
+        // Assuming `game` has a `currentPlayer` property and a `round` property
+        const player = game.currentPlayer; // or however the current player is identified
+        const round = game.rounds.length + 1; // Assuming `rounds` is an array of rounds
+    
+        // Update player information
+        if (player) {
+            document.getElementById('player-name').textContent = player.name || 'Unknown Player';
+            document.getElementById('player-color').style.backgroundColor = player.color || '#ffffff'; // Default to white if no color
+            document.getElementById('player-points').textContent = player.points || '0'; // Default to 0 if no points
+        } else {
+            document.getElementById('player-name').textContent = 'No player data';
+            document.getElementById('player-color').style.backgroundColor = '#ffffff';
+            document.getElementById('player-points').textContent = '0';
+        }
+    
+        // Update round information
+        document.getElementById('current-round').textContent = round || 'N/A'; // Default to 'N/A' if no round info
+    };
+    
+
     let prev;
     //let previousEndPoint = { x: null, y: null };
     // Function to draw ball on canvas

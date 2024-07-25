@@ -62,9 +62,35 @@ h1, gametitle {
     max-width: 100%;
     height: auto;
     position: absolute;
-    top: calc(50% - 600); /* Adjust top position of canvas */
-    left: calc(50% - 780); /* Adjust left position of canvas */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Translate to truly center */
+    border: 1px solid black;
 }
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .info-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+  
 
 #ball {
     z-index: 1; /* Adjust z-index as needed */
