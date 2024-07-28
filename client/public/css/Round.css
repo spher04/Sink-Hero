@@ -16,9 +16,8 @@
 #winner {
     display: flex;
     flex-direction: row; /* Ensure cards are displayed in a row */
-    flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
     justify-content: center; /* Center the cards horizontally */
-    gap: 20px; /* Space between cards */
+    gap: 10px; /* Space between cards */
     padding: 10px;
     box-sizing: border-box;
     flex: 1; /* Allow it to grow to fill space */
@@ -163,7 +162,6 @@
     #next-round-button {
         font-size: 0.9em;
         padding: 10px 20px;
-        max-width: 50%;
     }
 }
 

@@ -4,64 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sink Hero</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/Round.css">
     <script src="/socket.io/socket.io.js"></script>
     <script defer src="/client/js/client.js"></script>
-    <script>
-    </script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <!-- Game canvas and UI elements -->
-    <div id="game-container" style="display: none;">
-        <div class="info-bar">
-          <div class="player-info">
-            <span class="label">Player:</span> <span id="player-name"></span>
-          </div>
-          <div class="player-info">
-            <span class="label">Color:</span> <span id="player-color">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          </div>
-          <div class="player-info">
-            <span class="label">Points:</span> <span id="player-points"></span>
-          </div>
-          <div class="player-info">
-            <span class="label">Round:</span> <span id="current-round"></span>
-          </div>
-        </div>
-            <canvas class="canvas" id="mazeCanvas" style="display: none; border: 1px solid black" width="780" height="600"></canvas>
-            <canvas class="canvas" id="ball" style="display: none; border: 1px solid black" width="780" height="600"></canvas>
-      </div>
-
-    <div class="container" id="popup">
-        <h1>Sink Hero</h1>
-        <div id="joinSection">
-            <input type="text" id="gameId" placeholder="Game ID">
-            <input type="text" id="username" placeholder="Username">
-            <div id="joinButtonsection">
-                <button id="joinGame">Join Game</button>
-                <button id="becomeHost">Become Host</button>
-                <button id="permissionButton" style="display: none;">Grant Permissions</button>
+    <div id="game-container" class="container" style="display: none; position: relative;">
+        <div class="info-bar bg-dark text-white rounded">
+            <div class="player-info d-inline-block mx-2">
+                <span class="label font-weight-bold">Player:</span> <span id="player-name"></span>
+            </div>
+            <div class="player-info d-inline-block mx-2">
+                <span class="label font-weight-bold">Points:</span> <span id="player-points"></span>
+            </div>
+            <div class="player-info d-inline-block mx-2">
+                <span class="label font-weight-bold">Round:</span> <span id="current-round"></span>
             </div>
         </div>
-        <div id="waitingMessage" style="display: none;">
-            <h3 id="gameIdDisplay"></h3>
-            <div id="playersList"></div>
+        <div class="canvas-container position-relative">
+            <canvas id="mazeCanvas" style="display: none;" width="780" height="600" class="w-100"></canvas>
+            <canvas id="ball" style="display: none;" width="780" height="600" class="w-100"></canvas>
         </div>
-        <div id="startSection" style="display: none;">
-            <button id="startGame">Start Game</button>
-        </div>
-        <div id="gameInfo"></div>
-        <div id="errorMessage" style="color: red"></div>
-        <pre id="gameState"></pre>
     </div>
-   <div id="winner-container" style="display: none">
-        <h2 id="gameOverMessage" style="display: none"></h2>
-        <div id="winner" class="points-table">
-            <!-- Cards will be inserted here -->
-        </div>
-    <button id="next-round-button" style="display: none">Next Round</button>
-    <button id="playAgainButton" style="display: none">Play Again</button>
-</div>
+    
 
+    <div class="container-p mt-5" id="popup">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h1 class="mb-4">Sink Hero</h1>
+                <div id="joinSection">
+                    <input type="text" id="gameId" class="form-control mb-2" placeholder="Game ID">
+                    <input type="text" id="username" class="form-control mb-3" placeholder="Username">
+                    <div id="joinButtonsection">
+                        <button id="joinGame" class="btn btn-primary mb-2">Join Game</button>
+                        <button id="becomeHost" class="btn btn-secondary mb-2">Watch</button>
+                        <button id="permissionButton" class="btn btn-info" style="display: none;">Grant Permissions</button>
+                    </div>
+                </div>
+                <div id="waitingMessage" class="row " style="display: none;">
+                        <h5 class="text-center"> game id:<span gameIdDisplay></span></h5>
+                        <div id="playersList" class="list-group mt-3"></div>
+                </div>
+                
+                <div id="startSection" class="text-center" style="display: none;">
+                    <button id="startGame" class="btn btn-success">Start Game</button>
+                </div>
+                <div id="gameInfo"></div>
+                <div id="errorMessage" class="text-danger"></div>
+                <pre id="gameState"></pre>
+            </div>
+        </div>
+    </div>
+
+    <div id="winner-container" class="container mt-5" style="display: none;">
+        <div class="row justify-content-center">
+                <h2 id="gameOverMessage" class="text-center" style="display: none"></h2>
+                <div id="winner" class="points-table">
+                    <!-- Cards will be inserted here -->
+                </div>
+                <button id="next-round-button" class="btn btn-primary" style="display: none">Next Round</button>
+                <button id="playAgainButton" class="btn btn-secondary" style="display: none">Play Again</button>
+        </div>
+    </div>
 </body>
 </html>
