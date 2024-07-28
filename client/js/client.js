@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Game state variables
     let player = null;
+    let game = null;
     let velocity = { x: 0, y: 0 };
     let acceleration = { x: 0, y: 0 };
     const friction = 0.8;
@@ -74,12 +75,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     socket.on('waiting', (data) => {
         console.log(`New Players: `, JSON.stringify(data, null, 1));
+    
+        // Hide the join section and show the waiting message
         document.getElementById('joinSection').style.display = 'none';
         document.getElementById('waitingMessage').style.display = 'block';
-    
-        // Display the game ID at the top
-        const gameIdDisplay = document.getElementById('gameIdDisplay');
-        gameIdDisplay.innerText = `Game ID: `;
     
         // Clear the playersList section before updating
         const playersList = document.getElementById('playersList');
@@ -89,26 +88,45 @@ document.addEventListener("DOMContentLoaded", () => {
         data.forEach(player => {
             // Create a new div for each player
             const playerDiv = document.createElement('div');
-            //playerDiv.setAttribute('id', `player`); // Assign an ID to the player div
-            playerDiv.textContent = player.name;
-            playerDiv.style.backgroundColor = '#007bff';
+            playerDiv.setAttribute('class', 'list-item');
+            
+            // Create a color indicator
+            const colorIndicator = document.createElement('span');
+            colorIndicator.style.backgroundColor = player.color;
+            colorIndicator.style.width = '20px';
+            colorIndicator.style.height = '20px';
+            colorIndicator.style.display = 'inline-block';
+            colorIndicator.style.borderRadius = '50%';
+            colorIndicator.style.marginRight = '10px';
+            colorIndicator.style.verticalAlign = 'middle';
+            
+            // Create text for player name
+            const playerName = document.createElement('span');
+            playerName.textContent = player.name;
+            playerName.style.color = '#ffffff';
+            
+            // Append the color indicator and player name to the player div
+            playerDiv.appendChild(colorIndicator);
+            playerDiv.appendChild(playerName);
+    
+            // Style the player div
+            playerDiv.style.backgroundColor = '#0e315d';
             playerDiv.style.color = '#ffffff';
-            playerDiv.style.margin = '10px 0';
-            playerDiv.style.padding = '10px';
-            playerDiv.style.border = '1px solid #ffffff';
-            playerDiv.style.borderRadius = '3px';
+            playerDiv.style.margin = '5px'; // Adjusted margin for better spacing
+            playerDiv.style.padding = '10px'; // Increased padding for better appearance
+            playerDiv.style.borderRadius = '10px';
+            playerDiv.style.display = 'flex';
+            playerDiv.style.alignItems = 'center';
     
             // Append the player div to the playersList
             playersList.appendChild(playerDiv);
         });
     
+        // Control display of startSection based on the number of players
         document.getElementById('startSection').style.display = data.length >= 2 ? 'block' : 'none';
-        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'none'; // Ensure error message is hidden
     });
     
-    
-    
-
     socket.on("connect", () => {
         console.log('Connected to server');
     });
@@ -117,8 +135,22 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log('Disconnected from server');
     });
 
+    socket.on("GameInfo",Game => {
+        if(Game.rounds.lenght + 1 > 0 ){
+            //previousRoundData(game)
+            if(game.rounds.length + 1 === 2){
+                sensitivity = 70;
+            }
+            else if(game.rounds.length + 1 === 3 ){
+                sensitivity = 60;
+            }
+        }
+        game = Game;
+       
+    })
+
     socket.on('gameStart', (data) => {
-        //console.log(`player data reveived from the server : `, JSON.stringify(data,null,2))
+
         // Hide UI elements and display game canvas
         document.getElementById('popup').style.display = 'none';
         document.getElementById('gameInfo').setAttribute('data-game-id', data.gameId);
@@ -134,23 +166,17 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('next-round-button').style.display = 'none'
         document.getElementById('winner').style.display = 'block';
 
-        socket.on("game",game => {
-            if(game.rounds){
-                previousRoundData(game)
-                if(game.rounds.length + 1 === 2){
-                    sensitivity = 70;
-                }
-                else if(game.rounds.length + 1 === 3 ){
-                    sensitivity = 60;
-                }
-            }
-        })
 
 
+        
+
+        
 
         player = data; // Set player data
+        updateGameInfo(game);
         requestAnimationFrame(animate); // Start animation loop
     });
+
     socket.on("playerPositionChanged", (data) => {
         console.log(`position of player with player id ${data.name} received`);
         let canvas = document.getElementById("ball");
@@ -224,6 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const pointsTable = document.querySelector('#winner');
             const nextRoundButton = document.getElementById('next-round-button');
             const winnerContainer = document.getElementById('winner-container');
+            document.getElementById('game-container').style.display = 'none';
         
             if (!pointsTable) {
                 console.error('Points table element not found');
@@ -363,6 +390,31 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
+
+    const updateGameInfo = (game) => {
+        // Display the game container
+        document.getElementById("game-container").style.display = 'block';
+    
+        // Assuming `game` has a `currentPlayer` property and a `round` property
+        //const player = game.currentPlayer; // or however the current player is identified
+        const round = game.rounds.length; // Assuming `rounds` is an array of rounds
+    
+        // Update player information
+        if (player) {
+            document.getElementById('player-name').textContent = player.name || 'Unknown Player';
+            //document.getElementById('player-color').style.backgroundColor = player.color || '#ffffff'; // Default to white if no color
+            document.getElementById('player-points').textContent = player.points || '0'; // Default to 0 if no points
+        } else {
+            document.getElementById('player-name').textContent = 'No player data';
+            document.getElementById('player-color').style.backgroundColor = '#ffffff';
+            document.getElementById('player-points').textContent = '0';
+        }
+    
+        // Update round information
+        document.getElementById('current-round').textContent = round || 'N/A'; // Default to 'N/A' if no round info
+    };
+    
+
     let prev;
     //let previousEndPoint = { x: null, y: null };
     // Function to draw ball on canvas
@@ -454,7 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Gyroscope data handling
     window.addEventListener('deviceorientation', (event) => {
-        acceleration.x = event.gamma / sensitivity; // Adjust sensitivity as needed
-        acceleration.y = event.beta / sensitivity;  // Adjust sensitivity as needed
+        acceleration.x = event.gamma /80 ; // Adjust sensitivity as needed
+        acceleration.y = event.beta / 80;  // Adjust sensitivity as needed
     });
 });
