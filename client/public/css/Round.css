@@ -18,7 +18,6 @@
     flex-direction: row; /* Ensure cards are displayed in a row */
     justify-content: center; /* Center the cards horizontally */
     gap: 10px; /* Space between cards */
-    padding: 10px;
     box-sizing: border-box;
     flex: 1; /* Allow it to grow to fill space */
 }
@@ -32,7 +31,6 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
-    margin-top: 20px; /* Add space above the button */
     transition: background-color 0.3s;
 }
 

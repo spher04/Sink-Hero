@@ -175,6 +175,7 @@ io.on('connection', (socket) => {
     
         // Add the player to the list of finished players for the current round
         game.currentRound.finishedPlayers.push(player);
+        player.hasReachedEnd = true;
     
         // Determine player's finishing position
         let playerPosition = game.currentRound.finishedPlayers.length;
@@ -216,21 +217,23 @@ io.on('connection', (socket) => {
     socket.on('next-round',(player) => {
         console.log(`next-round triggered for player ${player.name}`);
         const game = games[player.gameId]
+        if(game.finishedPlayer < game.players){
+            io.to(player.id).emit("Next-round-error","Not all players have finished");
+            return;
+        }
+        else if(game.rounds.length <= 3){
+            nextRound(game)
+        }
+
         if (!game) {
             console.error(`Game with ID ${player.gameId} not found`);
             return;
-        }
-
-        if(game.rounds.length <= 3){
-            nextRound(game)
         }
         else{
             console.error(`No more rounds to play for game ${player.gameId}`);
             return;
         }
     })
-    
-    
     
 });
 
