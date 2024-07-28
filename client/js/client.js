@@ -43,6 +43,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("errorMessage").textContent = JSON.stringify(message.message,null,2);	;
     })
 
+    socket.on("Next-round-error", (message) => {	
+        document.getElementById("Next-round-errorMessage").textContent = JSON.stringify(message.message,null,2);	;
+    })
+
     document.getElementById("becomeHost").addEventListener("click", () => {
         const gameId = document.getElementById("gameId").value.trim();
         socket.emit("becomeHost", { gameId: gameId });
@@ -506,7 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Gyroscope data handling
     window.addEventListener('deviceorientation', (event) => {
-        acceleration.x = event.gamma /80 ; // Adjust sensitivity as needed
-        acceleration.y = event.beta / 80;  // Adjust sensitivity as needed
+        acceleration.x = event.gamma /40 ; // Adjust sensitivity as needed
+        acceleration.y = event.beta / 40;  // Adjust sensitivity as needed
     });
 });
